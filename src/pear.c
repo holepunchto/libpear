@@ -3,6 +3,7 @@
 #include <fx.h>
 #include <js.h>
 #include <log.h>
+#include <path.h>
 #include <string.h>
 #include <uv.h>
 
@@ -91,10 +92,34 @@ on_launch (fx_t *fx) {
   assert(err == 0);
 
   fx_image_t *image;
-  err = fx_image_init(fx, -10, -10, 420, 420, &image);
+  err = fx_image_init(fx, 0, 0, 400, 400, &image);
   assert(err == 0);
 
-  // TODO: Load splash screen
+  appling_path_t image_path;
+  size_t image_path_len = sizeof(appling_path_t);
+
+  err = path_join(
+    (const char *[]) {
+      app.path,
+#if defined(APPLING_OS_LINUX)
+#elif defined(APPLING_OS_DARWIN)
+        "../../Resources/splash.png",
+#elif defined(APPLING_OS_WIN32)
+#else
+#error Unsupported operating system
+#endif
+        NULL,
+    },
+    image_path,
+    &image_path_len,
+    path_behavior_system
+  );
+  assert(err == 0);
+
+  err = fx_image_load_file(image, image_path, image_path_len);
+  assert(err == 0);
+
+  printf("err=%d\n", err);
 
   fx_view_t *view;
   err = fx_view_init(fx, 0, 0, 400, 400, &view);
@@ -121,7 +146,7 @@ on_launch (fx_t *fx) {
   assert(err == 0);
 
 #if defined(APPLING_OS_WIN32)
-  err = fx_set_window_icon(window, "resources\\app\\icon.ico", -1);
+  err = fx_set_window_icon(window, "icon.ico", -1);
   assert(err == 0);
 #endif
 

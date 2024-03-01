@@ -25,10 +25,15 @@ target_sources(
     $<TARGET_OBJECTS:appling>
     $<TARGET_OBJECTS:appling_bootstrap>
     $<TARGET_OBJECTS:bare>
+    $<TARGET_OBJECTS:compact>
+    $<TARGET_OBJECTS:crc>
+    $<TARGET_OBJECTS:fs>
     $<TARGET_OBJECTS:fx>
     $<TARGET_OBJECTS:log>
     $<TARGET_OBJECTS:path>
-    $<TARGET_OBJECTS:fs>
+    $<TARGET_OBJECTS:quickbit>
+    $<TARGET_OBJECTS:sodium>
+    $<TARGET_OBJECTS:udx>
 )
 
 target_include_directories(
@@ -43,8 +48,13 @@ target_link_libraries(
     appling
     appling_bootstrap
     bare
+    compact
+    crc
+    fs
     fx
     log
     path
-    fs
+    quickbit
+    sodium
+    udx
 )
