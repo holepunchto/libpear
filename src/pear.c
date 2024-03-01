@@ -102,11 +102,11 @@ on_launch (fx_t *fx) {
     (const char *[]) {
       app.path,
 #if defined(APPLING_OS_LINUX)
-        "splash.png",
+        "../splash.png",
 #elif defined(APPLING_OS_DARWIN)
         "../../Resources/splash.png",
 #elif defined(APPLING_OS_WIN32)
-        "splash.png",
+        "../splash.png",
 #else
 #error Unsupported operating system
 #endif
