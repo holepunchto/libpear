@@ -119,8 +119,6 @@ on_launch (fx_t *fx) {
   err = fx_image_load_file(image, image_path, image_path_len);
   assert(err == 0);
 
-  printf("err=%d\n", err);
-
   fx_view_t *view;
   err = fx_view_init(fx, 0, 0, 400, 400, &view);
   assert(err == 0);
