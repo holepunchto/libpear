@@ -16,6 +16,8 @@ set_target_properties(
   pear
   PROPERTIES
   POSITION_INDEPENDENT_CODE ON
+  OUTPUT_NAME pear
+  PREFIX lib
 )
 
 target_sources(
