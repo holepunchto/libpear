@@ -145,11 +145,6 @@ on_launch (fx_t *fx) {
   err = fx_set_window_title(window, "Installing app", -1);
   assert(err == 0);
 
-#if defined(APPLING_OS_WIN32)
-  err = fx_set_window_icon(window, "icon.ico", -1);
-  assert(err == 0);
-#endif
-
   err = fx_activate_window(window);
   assert(err == 0);
 }
