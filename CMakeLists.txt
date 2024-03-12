@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.25)
 
-project(pear)
+project(pear C)
+
+if(MSVC)
+  add_compile_options(/MT$<$<CONFIG:Debug>:d>)
+endif()
 
 if(NOT TARGET appling)
   add_subdirectory(vendor/libappling EXCLUDE_FROM_ALL)
