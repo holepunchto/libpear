@@ -38,6 +38,7 @@ target_sources(
     $<TARGET_OBJECTS:log>
     $<TARGET_OBJECTS:path>
     $<TARGET_OBJECTS:quickbit>
+    $<TARGET_OBJECTS:simdle>
     $<TARGET_OBJECTS:sodium>
     $<TARGET_OBJECTS:udx>
 )
@@ -61,6 +62,7 @@ target_link_libraries(
     log
     path
     quickbit
+    simdle
     sodium
     udx
 )
