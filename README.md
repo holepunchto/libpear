@@ -11,10 +11,10 @@ See [`include/pear.h`](include/pear.h) for the public API.
 The primary function for launching a Pear appling. It initializes the internal Pear runtime and manages appling execution.
 
 ```c
-pear_launch (
-  int argc, 
-  char *argv[], 
-  pear_key_t key, 
+pear_launch(
+  int argc,
+  char *argv[],
+  pear_key_t key,
   const char *name
 )
 ```
