@@ -186,7 +186,7 @@ on_lock (appling_lock_t *req, int status) {
 
   assert(status == 0);
 
-  err = appling_resolve(req->loop, &resolve, NULL, &platform, on_resolve);
+  err = appling_resolve(req->loop, &resolve, NULL, &platform, 0, on_resolve);
   assert(err == 0);
 }
 
