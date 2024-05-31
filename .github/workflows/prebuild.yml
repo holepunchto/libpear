@@ -1,0 +1,51 @@
+name: Prebuild
+on:
+  workflow_dispatch:
+jobs:
+  prebuild:
+    strategy:
+      matrix:
+        include:
+        - os: ubuntu-22.04
+          platform: linux
+          arch: x64
+        - os: macos-12
+          platform: darwin
+          arch: x64
+        - os: macos-14
+          platform: darwin
+          arch: arm64
+        - os: windows-2022
+          platform: win32
+          arch: x64
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.platform }}-${{ matrix.arch }}
+    steps:
+    - if: ${{ matrix.platform == 'linux' }}
+      run: |
+        sudo apt update
+        sudo apt install -y libgtk-4-dev
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    - uses: actions/cache@v4
+      with:
+        path: corestore
+        key: corestore-${{ matrix.platform }}-${{ matrix.arch }}
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+    - run: npm install -g bare-dev
+    - run: bare-dev configure --platform ${{ matrix.platform }} --arch ${{ matrix.arch }} ${{ matrix.flags }}
+    - run: bare-dev build
+    - uses: actions/upload-artifact@v4
+      if: ${{ matrix.platform == 'linux' || matrix.platform == 'darwin' }}
+      with:
+        name: ${{ matrix.platform }}-${{ matrix.arch }}
+        path: build/libpear.a
+    - uses: actions/upload-artifact@v4
+      if: ${{ matrix.platform == 'win32' }}
+      with:
+        name: ${{ matrix.platform }}-${{ matrix.arch }}
+        path: |
+          build/Release/libpear.lib
