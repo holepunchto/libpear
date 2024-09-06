@@ -6,8 +6,11 @@
 #include <path.h>
 #include <string.h>
 #include <uv.h>
-#include <libgen.h>
-#include <unistd.h>
+
+#if defined(APPLING_OS_LINUX)
+  #include <libgen.h>
+  #include <unistd.h>
+#endif
 
 #include "../include/pear.h"
 
