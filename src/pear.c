@@ -6,6 +6,9 @@
 #include <path.h>
 #include <string.h>
 #include <uv.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <libgen.h>
 
 #include "../include/pear.h"
 
@@ -98,11 +101,15 @@ on_launch (fx_t *fx) {
   appling_path_t image_path;
   size_t image_path_len = sizeof(appling_path_t);
 
+  char snapPath[256];
+  char * fileName = basename(app.path);
+  snprintf(snapPath, sizeof(snapPath), "%s%s%s", "../share/", fileName, "/splash.png");
+
   err = path_join(
     (const char *[]) {
       app.path,
 #if defined(APPLING_OS_LINUX)
-        "../../../splash.png",
+         getenv("SNAP") != NULL ? snapPath :"../../../splash.png",
 #elif defined(APPLING_OS_DARWIN)
         "../../Resources/splash.png",
 #elif defined(APPLING_OS_WIN32)
