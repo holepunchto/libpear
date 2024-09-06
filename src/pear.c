@@ -6,6 +6,8 @@
 #include <path.h>
 #include <string.h>
 #include <uv.h>
+#include <libgen.h>
+#include <unistd.h>
 
 #include "../include/pear.h"
 
@@ -14,7 +16,7 @@ static uv_process_t process;
 
 static fx_window_t *window;
 
-static appling_link_t link;
+static appling_link_t appLink;
 static appling_lock_t lock;
 static appling_resolve_t resolve;
 static appling_bootstrap_t bootstrap;
@@ -98,11 +100,15 @@ on_launch (fx_t *fx) {
   appling_path_t image_path;
   size_t image_path_len = sizeof(appling_path_t);
 
+  char flatpakPath[256];
+  char * fileName = basename(app.path);
+  snprintf(flatpakPath, sizeof(flatpakPath), "%s%s%s", "../share/", fileName, "/splash.png");
+
   err = path_join(
     (const char *[]) {
       app.path,
 #if defined(APPLING_OS_LINUX)
-        "../../../splash.png",
+         access("/.flatpak-info", F_OK) == 0 ? flatpakPath :"../../../splash.png",
 #elif defined(APPLING_OS_DARWIN)
         "../../Resources/splash.png",
 #elif defined(APPLING_OS_WIN32)
@@ -155,7 +161,7 @@ on_unlock_launch (appling_lock_t *req, int status) {
 
   assert(status == 0);
 
-  err = appling_launch(&platform, &app, &link);
+  err = appling_launch(&platform, &app, &appLink);
   assert(err == 0);
 }
 
@@ -207,10 +213,10 @@ pear_launch (int argc, char *argv[], pear_key_t key, const char *name) {
   memcpy(&app.key, key, sizeof(appling_key_t));
 
   if (argc > 1) {
-    err = appling_parse(argv[1], &link);
+    err = appling_parse(argv[1], &appLink);
     assert(err == 0);
   } else {
-    memcpy(&link.key, app.key, sizeof(appling_key_t));
+    memcpy(&appLink.key, app.key, sizeof(appling_key_t));
   }
 
   err = appling_lock(uv_default_loop(), &lock, NULL, on_lock);
