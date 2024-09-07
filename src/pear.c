@@ -8,8 +8,8 @@
 #include <uv.h>
 
 #if defined(APPLING_OS_LINUX)
-  #include <libgen.h>
-  #include <unistd.h>
+#include <libgen.h>
+#include <unistd.h>
 #endif
 
 #include "../include/pear.h"
@@ -105,23 +105,22 @@ on_launch (fx_t *fx) {
 
 #if defined(APPLING_OS_LINUX)
   char flatpak_path[256];
-  char * file_name = basename(app.path);
-  snprintf(flatpak_path, sizeof(flatpak_path), "%s%s%s", "../share/", file_name, "/splash.png");
+  snprintf(flatpak_path, sizeof(flatpak_path), "%s%s%s", "../share/", basename(app.path), "/splash.png");
 #endif
 
   err = path_join(
-    (const char *[]) {
+    (const char *[]){
       app.path,
 #if defined(APPLING_OS_LINUX)
-         access("/.flatpak-info", F_OK) == 0 ? flatpak_path :"../../../splash.png",
+      access("/.flatpak-info", F_OK) == 0 ? flatpak_path : "../../../splash.png",
 #elif defined(APPLING_OS_DARWIN)
-        "../../Resources/splash.png",
+      "../../Resources/splash.png",
 #elif defined(APPLING_OS_WIN32)
-        "../splash.png",
+      "../splash.png",
 #else
 #error Unsupported operating system
 #endif
-        NULL,
+      NULL,
     },
     image_path,
     &image_path_len,
