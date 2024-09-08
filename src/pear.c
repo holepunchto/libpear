@@ -7,6 +7,11 @@
 #include <string.h>
 #include <uv.h>
 
+#if defined(APPLING_OS_LINUX)
+#include <libgen.h>
+#include <unistd.h>
+#endif
+
 #include "../include/pear.h"
 
 static uv_thread_t thread;
@@ -14,7 +19,7 @@ static uv_process_t process;
 
 static fx_window_t *window;
 
-static appling_link_t link;
+static appling_link_t app_link;
 static appling_lock_t lock;
 static appling_resolve_t resolve;
 static appling_bootstrap_t bootstrap;
@@ -98,19 +103,24 @@ on_launch (fx_t *fx) {
   appling_path_t image_path;
   size_t image_path_len = sizeof(appling_path_t);
 
+#if defined(APPLING_OS_LINUX)
+  char flatpak_path[256];
+  snprintf(flatpak_path, sizeof(flatpak_path), "%s%s%s", "../share/", basename(app.path), "/splash.png");
+#endif
+
   err = path_join(
-    (const char *[]) {
+    (const char *[]){
       app.path,
 #if defined(APPLING_OS_LINUX)
-        "../../../splash.png",
+      access("/.flatpak-info", F_OK) == 0 ? flatpak_path : "../../../splash.png",
 #elif defined(APPLING_OS_DARWIN)
-        "../../Resources/splash.png",
+      "../../Resources/splash.png",
 #elif defined(APPLING_OS_WIN32)
-        "../splash.png",
+      "../splash.png",
 #else
 #error Unsupported operating system
 #endif
-        NULL,
+      NULL,
     },
     image_path,
     &image_path_len,
@@ -155,7 +165,7 @@ on_unlock_launch (appling_lock_t *req, int status) {
 
   assert(status == 0);
 
-  err = appling_launch(&platform, &app, &link);
+  err = appling_launch(&platform, &app, &app_link);
   assert(err == 0);
 }
 
@@ -207,10 +217,10 @@ pear_launch (int argc, char *argv[], pear_key_t key, const char *name) {
   memcpy(&app.key, key, sizeof(appling_key_t));
 
   if (argc > 1) {
-    err = appling_parse(argv[1], &link);
+    err = appling_parse(argv[1], &app_link);
     assert(err == 0);
   } else {
-    memcpy(&link.key, app.key, sizeof(appling_key_t));
+    memcpy(&app_link.key, app.key, sizeof(appling_key_t));
   }
 
   err = appling_lock(uv_default_loop(), &lock, NULL, on_lock);
