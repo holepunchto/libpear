@@ -14,55 +14,55 @@
 
 #include "../include/pear.h"
 
-static uv_thread_t thread;
-static uv_process_t process;
+static uv_thread_t pear__thread;
+static uv_process_t pear__process;
 
-static fx_window_t *window;
+static fx_window_t *pear__window;
 
-static appling_link_t app_link;
-static appling_lock_t lock;
-static appling_resolve_t resolve;
-static appling_bootstrap_t bootstrap;
+static appling_link_t pear__app_link;
+static appling_lock_t pear__lock;
+static appling_resolve_t pear__resolve;
+static appling_bootstrap_t pear__bootstrap;
 
-static appling_platform_t platform = {
+static appling_platform_t pear__platform = {
   .dkey = {0x6b, 0x83, 0x74, 0xf1, 0xc0, 0x80, 0x9e, 0xd2, 0x3c, 0xfc, 0x37, 0x1e, 0x87, 0x89, 0x6c, 0x8d, 0x3b, 0xb5, 0x93, 0xf2, 0x45, 0x1d, 0x4d, 0x8d, 0xe8, 0x95, 0xd6, 0x28, 0x94, 0x18, 0x18, 0xdc},
 };
 
-static appling_app_t app = {0};
+static appling_app_t pear__app = {0};
 
 static void
-on_close (fx_t *fx, void *data) {
+pear__on_close (fx_t *fx, void *data) {
   int err;
 
-  err = fx_close_window(window);
+  err = fx_close_window(pear__window);
   assert(err == 0);
 
-  err = appling_open(&app, NULL);
+  err = appling_open(&pear__app, NULL);
   assert(err == 0);
 }
 
 static void
-on_unlock_boostrap (appling_lock_t *req, int status) {
-  int err;
-
-  assert(status == 0);
-
-  err = fx_dispatch(on_close, NULL);
-  assert(err == 0);
-}
-
-static void
-on_bootstrap (appling_bootstrap_t *req, int status) {
+pear__on_unlock_boostrap (appling_lock_t *req, int status) {
   int err;
 
   assert(status == 0);
 
-  err = appling_unlock(req->loop, &lock, on_unlock_boostrap);
+  err = fx_dispatch(pear__on_close, NULL);
   assert(err == 0);
 }
 
 static void
-on_thread (void *data) {
+pear__on_bootstrap (appling_bootstrap_t *req, int status) {
+  int err;
+
+  assert(status == 0);
+
+  err = appling_unlock(req->loop, &pear__lock, pear__on_unlock_boostrap);
+  assert(err == 0);
+}
+
+static void
+pear__on_thread (void *data) {
   int err;
 
   uv_loop_t loop;
@@ -73,7 +73,7 @@ on_thread (void *data) {
   err = js_create_platform(&loop, NULL, &js);
   assert(err == 0);
 
-  err = appling_bootstrap(&loop, js, &bootstrap, platform.dkey, NULL, on_bootstrap);
+  err = appling_bootstrap(&loop, js, &pear__bootstrap, pear__platform.dkey, NULL, pear__on_bootstrap);
   assert(err == 0);
 
   err = uv_run(&loop, UV_RUN_DEFAULT);
@@ -90,10 +90,10 @@ on_thread (void *data) {
 }
 
 static void
-on_launch (fx_t *fx) {
+pear__on_launch (fx_t *fx) {
   int err;
 
-  err = uv_thread_create(&thread, on_thread, NULL);
+  err = uv_thread_create(&pear__thread, pear__on_thread, NULL);
   assert(err == 0);
 
   fx_image_t *image;
@@ -109,8 +109,8 @@ on_launch (fx_t *fx) {
 #endif
 
   err = path_join(
-    (const char *[]){
-      app.path,
+    (const char *[]) {
+      pear__app.path,
 #if defined(APPLING_OS_LINUX)
       access("/.flatpak-info", F_OK) == 0 ? flatpak_path : "../../../splash.png",
 #elif defined(APPLING_OS_DARWIN)
@@ -149,41 +149,41 @@ on_launch (fx_t *fx) {
   err = fx_screen_release(screen);
   assert(err == 0);
 
-  err = fx_window_init(fx, view, (width - 400) / 2, (height - 400) / 2, 400, 400, fx_window_no_frame, &window);
+  err = fx_window_init(fx, view, (width - 400) / 2, (height - 400) / 2, 400, 400, fx_window_no_frame, &pear__window);
   assert(err == 0);
 
-  err = fx_set_window_title(window, "Installing app", -1);
+  err = fx_set_window_title(pear__window, "Installing app", -1);
   assert(err == 0);
 
-  err = fx_activate_window(window);
+  err = fx_activate_window(pear__window);
   assert(err == 0);
 }
 
 static void
-on_unlock_launch (appling_lock_t *req, int status) {
+pear__on_unlock_launch (appling_lock_t *req, int status) {
   int err;
 
   assert(status == 0);
 
-  err = appling_launch(&platform, &app, &app_link);
+  err = appling_launch(&pear__platform, &pear__app, &pear__app_link);
   assert(err == 0);
 }
 
 static void
-on_resolve (appling_resolve_t *req, int status) {
+pear__on_resolve (appling_resolve_t *req, int status) {
   int err;
 
   if (status == 0) {
-    err = appling_unlock(req->loop, &lock, on_unlock_launch);
+    err = appling_unlock(req->loop, &pear__lock, pear__on_unlock_launch);
   } else {
     fx_t *fx;
     err = fx_init(req->loop, &fx);
     assert(err == 0);
 
-    err = fx_run(fx, on_launch, NULL);
+    err = fx_run(fx, pear__on_launch, NULL);
     assert(err == 0);
 
-    err = uv_thread_join(&thread);
+    err = uv_thread_join(&pear__thread);
     assert(err == 0);
   }
 
@@ -191,12 +191,12 @@ on_resolve (appling_resolve_t *req, int status) {
 }
 
 static void
-on_lock (appling_lock_t *req, int status) {
+pear__on_lock (appling_lock_t *req, int status) {
   int err;
 
   assert(status == 0);
 
-  err = appling_resolve(req->loop, &resolve, NULL, &platform, 0, on_resolve);
+  err = appling_resolve(req->loop, &pear__resolve, NULL, &pear__platform, 0, pear__on_resolve);
   assert(err == 0);
 }
 
@@ -211,19 +211,19 @@ pear_launch (int argc, char *argv[], pear_key_t key, const char *name) {
 
   size_t path_len = sizeof(appling_path_t);
 
-  err = uv_exepath(app.path, &path_len);
+  err = uv_exepath(pear__app.path, &path_len);
   assert(err == 0);
 
-  memcpy(&app.key, key, sizeof(appling_key_t));
+  memcpy(&pear__app.key, key, sizeof(appling_key_t));
 
   if (argc > 1) {
-    err = appling_parse(argv[1], &app_link);
+    err = appling_parse(argv[1], &pear__app_link);
     assert(err == 0);
   } else {
-    memcpy(&app_link.key, app.key, sizeof(appling_key_t));
+    memcpy(&pear__app_link.key, pear__app.key, sizeof(appling_key_t));
   }
 
-  err = appling_lock(uv_default_loop(), &lock, NULL, on_lock);
+  err = appling_lock(uv_default_loop(), &pear__lock, NULL, pear__on_lock);
   assert(err == 0);
 
   err = uv_run(uv_default_loop(), UV_RUN_DEFAULT);

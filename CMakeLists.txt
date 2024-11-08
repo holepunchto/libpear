@@ -1,5 +1,11 @@
 cmake_minimum_required(VERSION 3.25)
 
+find_package(cmake-bare REQUIRED PATHS node_modules/cmake-bare)
+find_package(cmake-bare-bundle REQUIRED PATHS node_modules/cmake-bare-bundle)
+find_package(cmake-drive REQUIRED PATHS node_modules/cmake-drive)
+find_package(cmake-napi REQUIRED PATHS node_modules/cmake-napi)
+find_package(cmake-npm REQUIRED PATHS node_modules/cmake-npm)
+
 project(pear C)
 
 if(MSVC)
@@ -28,6 +34,17 @@ target_sources(
   pear
   PRIVATE
     src/pear.c
+)
+
+target_include_directories(
+  pear
+  PUBLIC
+    include
+)
+
+target_link_libraries(
+  pear
+  PRIVATE
     $<TARGET_OBJECTS:appling>
     $<TARGET_OBJECTS:appling_bootstrap>
     $<TARGET_OBJECTS:bare>
@@ -41,16 +58,6 @@ target_sources(
     $<TARGET_OBJECTS:simdle>
     $<TARGET_OBJECTS:sodium>
     $<TARGET_OBJECTS:udx>
-)
-
-target_include_directories(
-  pear
-  PUBLIC
-    include
-)
-
-target_link_libraries(
-  pear
   PUBLIC
     appling
     appling_bootstrap
@@ -66,3 +73,5 @@ target_link_libraries(
     sodium
     udx
 )
+
+install(TARGETS pear)
