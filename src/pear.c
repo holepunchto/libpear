@@ -105,7 +105,7 @@ pear__on_launch (fx_t *fx) {
 
 #if defined(APPLING_OS_LINUX)
   char flatpak_path[256];
-  snprintf(flatpak_path, sizeof(flatpak_path), "%s%s%s", "../share/", basename(app.path), "/splash.png");
+  snprintf(flatpak_path, sizeof(flatpak_path), "%s%s%s", "../share/", basename(pear__app.path), "/splash.png");
 #endif
 
   err = path_join(
