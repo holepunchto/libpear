@@ -39,30 +39,38 @@ target_link_libraries(
     $<TARGET_OBJECTS:appling>
     $<TARGET_OBJECTS:appling_bootstrap>
     $<TARGET_OBJECTS:bare>
+    $<TARGET_OBJECTS:base64>
     $<TARGET_OBJECTS:compact>
     $<TARGET_OBJECTS:crc>
     $<TARGET_OBJECTS:fs>
     $<TARGET_OBJECTS:fx>
+    $<TARGET_OBJECTS:hex>
     $<TARGET_OBJECTS:log>
+    $<TARGET_OBJECTS:napi>
     $<TARGET_OBJECTS:path>
     $<TARGET_OBJECTS:quickbit>
     $<TARGET_OBJECTS:simdle>
     $<TARGET_OBJECTS:sodium>
     $<TARGET_OBJECTS:udx>
+    $<TARGET_OBJECTS:uv>
   PUBLIC
     appling
     appling_bootstrap
     bare
+    base64
     compact
     crc
     fs
     fx
+    hex
     log
+    napi
     path
     quickbit
     simdle
     sodium
     udx
+    uv
 )
 
 install(TARGETS pear)
