@@ -37,6 +37,8 @@ jobs:
         node-version: lts/*
     - run: choco upgrade llvm
       if: ${{ matrix.platform == 'win32' }}
+    - run: git config --system core.longpaths true
+      if: ${{ matrix.platform == 'win32' }}
     - run: npm install -g bare-make
     - run: npm install
     - run: bare-make generate --platform ${{ matrix.platform }} --arch ${{ matrix.arch }} --debug
