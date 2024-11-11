@@ -25,16 +25,6 @@ target_sources(
   pear
   PRIVATE
     src/pear.c
-)
-
-target_include_directories(
-  pear
-  PUBLIC
-    include
-)
-
-target_link_libraries(
-  pear
   PRIVATE
     $<TARGET_OBJECTS:appling>
     $<TARGET_OBJECTS:appling_bootstrap>
@@ -52,7 +42,18 @@ target_link_libraries(
     $<TARGET_OBJECTS:simdle>
     $<TARGET_OBJECTS:sodium>
     $<TARGET_OBJECTS:udx>
+    $<TARGET_OBJECTS:utf>
     $<TARGET_OBJECTS:uv>
+)
+
+target_include_directories(
+  pear
+  PUBLIC
+    include
+)
+
+target_link_libraries(
+  pear
   PUBLIC
     appling
     appling_bootstrap
@@ -70,6 +71,7 @@ target_link_libraries(
     simdle
     sodium
     udx
+    utf
     uv
 )
 
