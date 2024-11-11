@@ -23,10 +23,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.platform }}-${{ matrix.arch }}
     steps:
-    - run: |
-        sudo apt update
-        sudo apt install -y libgtk-4-dev
-      if: ${{ matrix.platform == 'linux' }}
     - uses: actions/checkout@v4
     - uses: actions/cache@v4
       with:
@@ -35,6 +31,10 @@ jobs:
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
+    - run: |
+        sudo apt update
+        sudo apt install -y libgtk-4-dev
+      if: ${{ matrix.platform == 'linux' }}
     - run: choco upgrade llvm
       if: ${{ matrix.platform == 'win32' }}
     - run: git config --system core.longpaths true
