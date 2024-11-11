@@ -23,13 +23,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.platform }}-${{ matrix.arch }}
     steps:
-    - if: ${{ matrix.platform == 'linux' }}
-      run: |
+    - run: |
         sudo apt update
         sudo apt install -y libgtk-4-dev
+      if: ${{ matrix.platform == 'linux' }}
     - uses: actions/checkout@v4
-      with:
-        submodules: recursive
     - uses: actions/cache@v4
       with:
         path: build/corestore
@@ -41,7 +39,5 @@ jobs:
       if: ${{ matrix.platform == 'win32' }}
     - run: npm install -g bare-make
     - run: npm install
-    - run: npm install --prefix vendor/libappling
-    - run: npm install --prefix vendor/libappling/vendor/bare
     - run: bare-make generate --platform ${{ matrix.platform }} --arch ${{ matrix.arch }} --debug
     - run: bare-make build

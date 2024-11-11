@@ -1,6 +1,0 @@
-[submodule "vendor/libappling"]
-	path = vendor/libappling
-	url = ../../holepunchto/libappling.git
-[submodule "vendor/libfx"]
-	path = vendor/libfx
-	url = ../../holepunchto/libfx.git

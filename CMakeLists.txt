@@ -1,10 +1,6 @@
 cmake_minimum_required(VERSION 3.25)
 
-find_package(cmake-bare REQUIRED PATHS node_modules/cmake-bare)
-find_package(cmake-bare-bundle REQUIRED PATHS node_modules/cmake-bare-bundle)
-find_package(cmake-drive REQUIRED PATHS node_modules/cmake-drive)
-find_package(cmake-napi REQUIRED PATHS node_modules/cmake-napi)
-find_package(cmake-npm REQUIRED PATHS node_modules/cmake-npm)
+find_package(cmake-fetch REQUIRED PATHS node_modules/cmake-fetch)
 
 project(pear C)
 
@@ -12,13 +8,8 @@ if(MSVC)
   add_compile_options(/MT$<$<CONFIG:Debug>:d>)
 endif()
 
-if(NOT TARGET appling)
-  add_subdirectory(vendor/libappling EXCLUDE_FROM_ALL)
-endif()
-
-if(NOT TARGET fx)
-  add_subdirectory(vendor/libfx EXCLUDE_FROM_ALL)
-endif()
+fetch_package("github:holepunchto/libappling")
+fetch_package("github:holepunchto/libfx")
 
 add_library(pear STATIC)
 
