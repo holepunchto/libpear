@@ -28,6 +28,8 @@ static appling_platform_t pear__platform = {
   .dkey = {0x6b, 0x83, 0x74, 0xf1, 0xc0, 0x80, 0x9e, 0xd2, 0x3c, 0xfc, 0x37, 0x1e, 0x87, 0x89, 0x6c, 0x8d, 0x3b, 0xb5, 0x93, 0xf2, 0x45, 0x1d, 0x4d, 0x8d, 0xe8, 0x95, 0xd6, 0x28, 0x94, 0x18, 0x18, 0xdc},
 };
 
+static uint64_t pear__minimum_length = 5810;
+
 static appling_app_t pear__app = {0};
 
 static void
@@ -196,7 +198,7 @@ pear__on_lock (appling_lock_t *req, int status) {
 
   assert(status == 0);
 
-  err = appling_resolve(req->loop, &pear__resolve, NULL, &pear__platform, 0, pear__on_resolve);
+  err = appling_resolve(req->loop, &pear__resolve, NULL, &pear__platform, pear__minimum_length, pear__on_resolve);
   assert(err == 0);
 }
 
