@@ -55,7 +55,7 @@ target_include_directories(
 
 target_link_libraries(
   pear
-  PUBLIC
+  PRIVATE
     appling
     appling_bootstrap
     bare

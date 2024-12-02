@@ -10,7 +10,7 @@ foreach(test IN LISTS tests)
     PRIVATE
       # Link the resulting static archive directly to ensure that all symbols
       # have been properly bundled.
-      $<LINK_LIBRARY:WHOLE_ARCHIVE,$<TARGET_FILE:pear>>
+      $<LINK_LIBRARY:WHOLE_ARCHIVE,libpear.a>
     PRIVATE
       $<TARGET_PROPERTY:fx,INTERFACE_LINK_LIBRARIES>
     PRIVATE
