@@ -12,6 +12,7 @@ foreach(test IN LISTS tests)
       # have been properly bundled.
       $<TARGET_GENEX_EVAL:pear,$<LINK_LIBRARY:WHOLE_ARCHIVE,$<TARGET_FILE:pear>>>
     PRIVATE
+      $<TARGET_GENEX_EVAL:uv,$<TARGET_PROPERTY:uv,INTERFACE_LINK_LIBRARIES>>
       $<TARGET_GENEX_EVAL:fx,$<TARGET_PROPERTY:fx,INTERFACE_LINK_LIBRARIES>>
     PRIVATE
       js
