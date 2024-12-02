@@ -33,7 +33,7 @@ static uint64_t pear__minimum_length = 5810;
 static appling_app_t pear__app = {0};
 
 static void
-pear__on_close (fx_t *fx, void *data) {
+pear__on_close(fx_t *fx, void *data) {
   int err;
 
   err = fx_close_window(pear__window);
@@ -44,7 +44,7 @@ pear__on_close (fx_t *fx, void *data) {
 }
 
 static void
-pear__on_unlock_boostrap (appling_lock_t *req, int status) {
+pear__on_unlock_boostrap(appling_lock_t *req, int status) {
   int err;
 
   assert(status == 0);
@@ -54,7 +54,7 @@ pear__on_unlock_boostrap (appling_lock_t *req, int status) {
 }
 
 static void
-pear__on_bootstrap (appling_bootstrap_t *req, int status) {
+pear__on_bootstrap(appling_bootstrap_t *req, int status) {
   int err;
 
   assert(status == 0);
@@ -64,7 +64,7 @@ pear__on_bootstrap (appling_bootstrap_t *req, int status) {
 }
 
 static void
-pear__on_thread (void *data) {
+pear__on_thread(void *data) {
   int err;
 
   uv_loop_t loop;
@@ -92,7 +92,7 @@ pear__on_thread (void *data) {
 }
 
 static void
-pear__on_launch (fx_t *fx) {
+pear__on_launch(fx_t *fx) {
   int err;
 
   err = uv_thread_create(&pear__thread, pear__on_thread, NULL);
@@ -162,7 +162,7 @@ pear__on_launch (fx_t *fx) {
 }
 
 static void
-pear__on_unlock_launch (appling_lock_t *req, int status) {
+pear__on_unlock_launch(appling_lock_t *req, int status) {
   int err;
 
   assert(status == 0);
@@ -172,7 +172,7 @@ pear__on_unlock_launch (appling_lock_t *req, int status) {
 }
 
 static void
-pear__on_resolve (appling_resolve_t *req, int status) {
+pear__on_resolve(appling_resolve_t *req, int status) {
   int err;
 
   if (status == 0) {
@@ -193,7 +193,7 @@ pear__on_resolve (appling_resolve_t *req, int status) {
 }
 
 static void
-pear__on_lock (appling_lock_t *req, int status) {
+pear__on_lock(appling_lock_t *req, int status) {
   int err;
 
   assert(status == 0);
@@ -203,7 +203,7 @@ pear__on_lock (appling_lock_t *req, int status) {
 }
 
 int
-pear_launch (int argc, char *argv[], pear_key_t key, const char *name) {
+pear_launch(int argc, char *argv[], pear_key_t key, const char *name) {
   int err;
 
   argv = uv_setup_args(argc, argv);

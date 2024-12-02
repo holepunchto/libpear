@@ -1,14 +1,16 @@
 cmake_minimum_required(VERSION 3.25)
 
+find_package(cmake-bare REQUIRED PATHS node_modules/cmake-bare)
 find_package(cmake-fetch REQUIRED PATHS node_modules/cmake-fetch)
 
-project(pear C)
+project(pear C CXX)
 
 if(MSVC)
   add_compile_options(/MT$<$<CONFIG:Debug>:d>)
 endif()
 
-fetch_package("github:holepunchto/libappling")
+fetch_package("github:holepunchto/bare@1.12.1" SOURCE_DIR bare_dir)
+fetch_package("github:holepunchto/libappling" SOURCE_DIR appling_dir)
 fetch_package("github:holepunchto/libfx")
 
 add_library(pear STATIC)
@@ -36,14 +38,13 @@ target_sources(
     $<TARGET_OBJECTS:fx>
     $<TARGET_OBJECTS:hex>
     $<TARGET_OBJECTS:log>
-    $<TARGET_OBJECTS:napi>
     $<TARGET_OBJECTS:path>
     $<TARGET_OBJECTS:quickbit>
     $<TARGET_OBJECTS:simdle>
     $<TARGET_OBJECTS:sodium>
     $<TARGET_OBJECTS:udx>
+    $<TARGET_OBJECTS:url>
     $<TARGET_OBJECTS:utf>
-    $<TARGET_OBJECTS:uv>
 )
 
 target_include_directories(
@@ -65,14 +66,39 @@ target_link_libraries(
     fx
     hex
     log
-    napi
     path
     quickbit
     simdle
     sodium
     udx
+    url
     utf
-    uv
+)
+
+link_bare_modules(
+  pear
+  EXCLUDE
+    bare-crypto
+    bare-dns
+    bare-inspector
+    bare-pipe
+    bare-repl
+    bare-signals
+    bare-tcp
+    bare-tls
+    bare-tty
+  WORKING_DIRECTORY "${bare_dir}"
+)
+
+link_bare_modules(
+  pear
+  WORKING_DIRECTORY "${appling_dir}"
 )
 
 install(TARGETS pear)
+
+if(PROJECT_IS_TOP_LEVEL)
+  enable_testing()
+
+  add_subdirectory(test)
+endif()
