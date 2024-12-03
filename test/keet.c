@@ -2,8 +2,8 @@
 
 int
 main(int argc, char *argv[]) {
-  static pear_key_t key = "keet";
+  static pear_id_t id = "keet";
   static const char *name = "keet";
 
-  return pear_launch(argc, argv, key, name);
+  return pear_launch(argc, argv, id, name);
 }

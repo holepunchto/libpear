@@ -5,12 +5,12 @@
 extern "C" {
 #endif
 
-#define PEAR_KEY_MAX 64
+#define PEAR_ID_MAX 64
 
-typedef char pear_key_t[PEAR_KEY_MAX + 1 /* NULL */];
+typedef char pear_id_t[PEAR_ID_MAX + 1 /* NULL */];
 
 int
-pear_launch (int argc, char *argv[], pear_key_t key, const char *name);
+pear_launch(int argc, char *argv[], pear_id_t key, const char *name);
 
 #ifdef __cplusplus
 }

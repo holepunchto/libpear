@@ -25,10 +25,9 @@ static appling_resolve_t pear__resolve;
 static appling_bootstrap_t pear__bootstrap;
 
 static appling_platform_t pear__platform = {
-  .dkey = {0x6b, 0x83, 0x74, 0xf1, 0xc0, 0x80, 0x9e, 0xd2, 0x3c, 0xfc, 0x37, 0x1e, 0x87, 0x89, 0x6c, 0x8d, 0x3b, 0xb5, 0x93, 0xf2, 0x45, 0x1d, 0x4d, 0x8d, 0xe8, 0x95, 0xd6, 0x28, 0x94, 0x18, 0x18, 0xdc},
+  .key = {0x6b, 0x83, 0x74, 0xf1, 0xc0, 0x80, 0x9e, 0xd2, 0x3c, 0xfc, 0x37, 0x1e, 0x87, 0x89, 0x6c, 0x8d, 0x3b, 0xb5, 0x93, 0xf2, 0x45, 0x1d, 0x4d, 0x8d, 0xe8, 0x95, 0xd6, 0x28, 0x94, 0x18, 0x18, 0xdc},
+  .length = 5810,
 };
-
-static uint64_t pear__minimum_length = 5810;
 
 static appling_app_t pear__app = {0};
 
@@ -75,7 +74,7 @@ pear__on_thread(void *data) {
   err = js_create_platform(&loop, NULL, &js);
   assert(err == 0);
 
-  err = appling_bootstrap(&loop, js, &pear__bootstrap, pear__platform.dkey, NULL, pear__on_bootstrap);
+  err = appling_bootstrap(&loop, js, &pear__bootstrap, pear__platform.key, NULL, pear__on_bootstrap);
   assert(err == 0);
 
   err = uv_run(&loop, UV_RUN_DEFAULT);
@@ -198,12 +197,12 @@ pear__on_lock(appling_lock_t *req, int status) {
 
   assert(status == 0);
 
-  err = appling_resolve(req->loop, &pear__resolve, NULL, &pear__platform, pear__minimum_length, pear__on_resolve);
+  err = appling_resolve(req->loop, &pear__resolve, NULL, &pear__platform, pear__on_resolve);
   assert(err == 0);
 }
 
 int
-pear_launch(int argc, char *argv[], pear_key_t key, const char *name) {
+pear_launch(int argc, char *argv[], pear_id_t key, const char *name) {
   int err;
 
   argv = uv_setup_args(argc, argv);
@@ -216,13 +215,13 @@ pear_launch(int argc, char *argv[], pear_key_t key, const char *name) {
   err = uv_exepath(pear__app.path, &path_len);
   assert(err == 0);
 
-  memcpy(&pear__app.key, key, sizeof(appling_key_t));
+  memcpy(&pear__app.id, key, sizeof(appling_id_t));
 
   if (argc > 1) {
     err = appling_parse(argv[1], &pear__app_link);
     assert(err == 0);
   } else {
-    memcpy(&pear__app_link.key, pear__app.key, sizeof(appling_key_t));
+    memcpy(&pear__app_link.id, pear__app.id, sizeof(appling_id_t));
   }
 
   err = appling_lock(uv_default_loop(), &pear__lock, NULL, pear__on_lock);
