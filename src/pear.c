@@ -30,6 +30,7 @@ static appling_platform_t pear__platform = {
 };
 
 static appling_app_t pear__app = {0};
+static const char *pear__app_name = NULL;
 
 static void
 pear__on_close(fx_t *fx, void *data) {
@@ -166,7 +167,7 @@ pear__on_unlock_launch(appling_lock_t *req, int status) {
 
   assert(status == 0);
 
-  err = appling_launch(&pear__platform, &pear__app, &pear__app_link);
+  err = appling_launch(&pear__platform, &pear__app, &pear__app_link, pear__app_name);
   assert(err == 0);
 }
 
@@ -204,6 +205,8 @@ pear__on_lock(appling_lock_t *req, int status) {
 int
 pear_launch(int argc, char *argv[], pear_id_t key, const char *name) {
   int err;
+
+  pear__app_name = name;
 
   argv = uv_setup_args(argc, argv);
 
