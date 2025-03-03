@@ -9,7 +9,7 @@ if(MSVC)
   add_compile_options(/MT$<$<CONFIG:Debug>:d>)
 endif()
 
-fetch_package("github:holepunchto/bare@1.13.1" SOURCE_DIR bare_dir)
+fetch_package("github:holepunchto/bare@1.15.2" SOURCE_DIR bare_dir)
 fetch_package("github:holepunchto/libappling" SOURCE_DIR appling_dir)
 fetch_package("github:holepunchto/libfx")
 
