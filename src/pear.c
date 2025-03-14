@@ -76,7 +76,7 @@ pear__on_thread(void *data) {
   err = js_create_platform(&loop, NULL, &js);
   assert(err == 0);
 
-  err = appling_bootstrap(&loop, js, &pear__bootstrap, pear__platform.key, NULL, pear__on_bootstrap);
+  err = appling_bootstrap(&loop, js, &pear__bootstrap, pear__platform.key, pear__path, pear__on_bootstrap);
   assert(err == 0);
 
   err = uv_run(&loop, UV_RUN_DEFAULT);
