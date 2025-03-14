@@ -230,7 +230,7 @@ pear_launch(int argc, char *argv[], pear_id_t key, const char *name) {
 
   pear__path = NULL; // Default platform directory
 
-  #if defined(APPLING_OS_LINUX)
+#if defined(APPLING_OS_LINUX)
   if (getenv("SNAP_USER_COMMON") != NULL) {
     appling_path_t snap_path;
     size_t snap_path_len = sizeof(appling_path_t);
@@ -249,7 +249,7 @@ pear_launch(int argc, char *argv[], pear_id_t key, const char *name) {
 
     pear__path = strdup(snap_path);
   }
-  #endif
+#endif
 
   err = appling_lock(uv_default_loop(), &pear__lock, pear__path, pear__on_lock);
   assert(err == 0);
