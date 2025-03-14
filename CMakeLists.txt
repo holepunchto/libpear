@@ -75,6 +75,14 @@ target_link_libraries(
     utf
 )
 
+if(WIN32)
+  target_link_libraries(
+    pear
+    PUBLIC
+      ntdll
+  )
+endif()
+
 link_bare_modules(
   pear
   EXCLUDE
