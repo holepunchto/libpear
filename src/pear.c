@@ -21,6 +21,7 @@ static fx_window_t *pear__window;
 
 static appling_link_t pear__app_link;
 static appling_lock_t pear__lock;
+static const char *pear__path;
 static appling_resolve_t pear__resolve;
 static appling_bootstrap_t pear__bootstrap;
 
@@ -30,7 +31,7 @@ static appling_platform_t pear__platform = {
 };
 
 static appling_app_t pear__app = {0};
-static const char *pear__app_name = NULL;
+static const char *pear__app_name;
 
 static void
 pear__on_close(fx_t *fx, void *data) {
@@ -198,7 +199,7 @@ pear__on_lock(appling_lock_t *req, int status) {
 
   assert(status == 0);
 
-  err = appling_resolve(req->loop, &pear__resolve, NULL, &pear__platform, pear__on_resolve);
+  err = appling_resolve(req->loop, &pear__resolve, pear__path, &pear__platform, pear__on_resolve);
   assert(err == 0);
 }
 
@@ -227,7 +228,9 @@ pear_launch(int argc, char *argv[], pear_id_t key, const char *name) {
     memcpy(&pear__app_link.id, pear__app.id, sizeof(appling_id_t));
   }
 
-  err = appling_lock(uv_default_loop(), &pear__lock, NULL, pear__on_lock);
+  path__path = NULL; // Default platform directory
+
+  err = appling_lock(uv_default_loop(), &pear__lock, path__path, pear__on_lock);
   assert(err == 0);
 
   err = uv_run(uv_default_loop(), UV_RUN_DEFAULT);
