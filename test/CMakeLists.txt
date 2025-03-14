@@ -18,6 +18,14 @@ foreach(test IN LISTS tests)
       js
   )
 
+  if(WIN32)
+    target_link_libraries(
+      ${test}
+      PUBLIC
+        ntdll
+    )
+  endif()
+
   add_test(
     NAME ${test}
     COMMAND ${test}
