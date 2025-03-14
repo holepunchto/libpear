@@ -228,9 +228,9 @@ pear_launch(int argc, char *argv[], pear_id_t key, const char *name) {
     memcpy(&pear__app_link.id, pear__app.id, sizeof(appling_id_t));
   }
 
-  path__path = NULL; // Default platform directory
+  pear__path = NULL; // Default platform directory
 
-  err = appling_lock(uv_default_loop(), &pear__lock, path__path, pear__on_lock);
+  err = appling_lock(uv_default_loop(), &pear__lock, pear__path, pear__on_lock);
   assert(err == 0);
 
   err = uv_run(uv_default_loop(), UV_RUN_DEFAULT);
