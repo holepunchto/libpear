@@ -3,13 +3,13 @@ cmake_minimum_required(VERSION 3.25)
 find_package(cmake-bare REQUIRED PATHS node_modules/cmake-bare)
 find_package(cmake-fetch REQUIRED PATHS node_modules/cmake-fetch)
 
-project(pear C CXX)
+project(pear C CXX ASM)
 
 if(MSVC)
   add_compile_options(/MT$<$<CONFIG:Debug>:d>)
 endif()
 
-fetch_package("github:holepunchto/bare@1.15.2" SOURCE_DIR bare_dir)
+fetch_package("github:holepunchto/bare#df6e52f" SOURCE_DIR bare_dir)
 fetch_package("github:holepunchto/libappling" SOURCE_DIR appling_dir)
 fetch_package("github:holepunchto/libfx")
 
@@ -33,13 +33,14 @@ target_sources(
     $<TARGET_OBJECTS:bare>
     $<TARGET_OBJECTS:base64>
     $<TARGET_OBJECTS:compact>
-    $<TARGET_OBJECTS:crc>
     $<TARGET_OBJECTS:fs>
     $<TARGET_OBJECTS:fx>
     $<TARGET_OBJECTS:hex>
     $<TARGET_OBJECTS:log>
     $<TARGET_OBJECTS:path>
     $<TARGET_OBJECTS:quickbit>
+    $<TARGET_OBJECTS:rocksdb>
+    $<TARGET_OBJECTS:rocksdb_facebook>
     $<TARGET_OBJECTS:simdle>
     $<TARGET_OBJECTS:sodium>
     $<TARGET_OBJECTS:udx>
@@ -61,13 +62,14 @@ target_link_libraries(
     bare
     base64
     compact
-    crc
     fs
     fx
     hex
     log
     path
     quickbit
+    rocksdb
+    rocksdb_facebook
     simdle
     sodium
     udx
