@@ -1,11 +1,9 @@
 cmake_minimum_required(VERSION 3.25)
 
-find_package(cmake-bare REQUIRED PATHS node_modules/cmake-bare)
 find_package(cmake-fetch REQUIRED PATHS node_modules/cmake-fetch)
 
 project(pear C CXX ASM)
 
-fetch_package("github:holepunchto/bare")
 fetch_package("github:holepunchto/libappling")
 fetch_package("github:holepunchto/libfx")
 

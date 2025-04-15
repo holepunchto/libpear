@@ -12,7 +12,6 @@
   },
   "homepage": "https://github.com/holepunchto/libpear#readme",
   "devDependencies": {
-    "cmake-bare": "^1.4.0",
     "cmake-fetch": "^1.1.0",
     "prettier": "^3.4.2",
     "prettier-config-standard": "^7.0.0"
