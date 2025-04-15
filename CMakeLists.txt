@@ -5,107 +5,53 @@ find_package(cmake-fetch REQUIRED PATHS node_modules/cmake-fetch)
 
 project(pear C CXX ASM)
 
-if(MSVC)
-  add_compile_options(/MT$<$<CONFIG:Debug>:d>)
-endif()
-
-fetch_package("github:holepunchto/bare#df6e52f" SOURCE_DIR bare_dir)
-fetch_package("github:holepunchto/libappling" SOURCE_DIR appling_dir)
+fetch_package("github:holepunchto/bare")
+fetch_package("github:holepunchto/libappling")
 fetch_package("github:holepunchto/libfx")
 
-add_library(pear STATIC)
+add_library(pear OBJECT)
 
 set_target_properties(
   pear
   PROPERTIES
+  C_STANDARD 99
   POSITION_INDEPENDENT_CODE ON
-  OUTPUT_NAME pear
-  PREFIX lib
 )
 
 target_sources(
   pear
   PRIVATE
     src/pear.c
-  PRIVATE
-    $<TARGET_OBJECTS:appling>
-    $<TARGET_OBJECTS:appling_bootstrap>
-    $<TARGET_OBJECTS:bare>
-    $<TARGET_OBJECTS:base64>
-    $<TARGET_OBJECTS:compact>
-    $<TARGET_OBJECTS:fs>
-    $<TARGET_OBJECTS:fx>
-    $<TARGET_OBJECTS:hex>
-    $<TARGET_OBJECTS:log>
-    $<TARGET_OBJECTS:path>
-    $<TARGET_OBJECTS:quickbit>
-    $<TARGET_OBJECTS:rocksdb>
-    $<TARGET_OBJECTS:rocksdb_facebook>
-    $<TARGET_OBJECTS:simdle>
-    $<TARGET_OBJECTS:sodium>
-    $<TARGET_OBJECTS:udx>
-    $<TARGET_OBJECTS:url>
-    $<TARGET_OBJECTS:utf>
 )
 
 target_include_directories(
   pear
-  PUBLIC
+  INTERFACE
     include
+  PRIVATE
+    $<TARGET_PROPERTY:appling,INTERFACE_INCLUDE_DIRECTORIES>
+    $<TARGET_PROPERTY:fx,INTERFACE_INCLUDE_DIRECTORIES>
+)
+
+add_library(pear_static STATIC)
+
+set_target_properties(
+  pear_static
+  PROPERTIES
+  OUTPUT_NAME pear
+  PREFIX lib
 )
 
 target_link_libraries(
-  pear
-  PRIVATE
-    appling
-    appling_bootstrap
-    bare
-    base64
-    compact
-    fs
-    fx
-    hex
-    log
-    path
-    quickbit
-    rocksdb
-    rocksdb_facebook
-    simdle
-    sodium
-    udx
-    url
-    utf
-)
-
-if(WIN32)
-  target_link_libraries(
+  pear_static
+  PUBLIC
     pear
-    PUBLIC
-      ntdll
-  )
-endif()
-
-link_bare_modules(
-  pear
-  EXCLUDE
-    bare-crypto
-    bare-dns
-    bare-inspector
-    bare-pipe
-    bare-repl
-    bare-signals
-    bare-tcp
-    bare-tls
-    bare-tty
-  WORKING_DIRECTORY "${bare_dir}"
+  PRIVATE
+    appling_static
+    fx_static
 )
 
-link_bare_modules(
-  pear
-  WORKING_DIRECTORY "${appling_dir}"
-)
-
-install(TARGETS pear)
+install(TARGETS pear_static)
 
 if(PROJECT_IS_TOP_LEVEL)
   enable_testing()

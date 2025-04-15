@@ -5,32 +5,11 @@ list(APPEND tests
 foreach(test IN LISTS tests)
   add_executable(${test} ${test}.c)
 
-  set_target_properties(
-    ${test}
-    PROPERTIES
-    LINKER_LANGUAGE CXX
-  )
-
   target_link_libraries(
     ${test}
     PRIVATE
-      # Link the resulting static archive directly to ensure that all symbols
-      # have been properly bundled.
-      $<TARGET_GENEX_EVAL:pear,$<LINK_LIBRARY:WHOLE_ARCHIVE,$<TARGET_FILE:pear>>>
-    PRIVATE
-      $<TARGET_GENEX_EVAL:uv,$<TARGET_PROPERTY:uv,INTERFACE_LINK_LIBRARIES>>
-      $<TARGET_GENEX_EVAL:fx,$<TARGET_PROPERTY:fx,INTERFACE_LINK_LIBRARIES>>
-    PRIVATE
-      js
+      pear_static
   )
-
-  if(WIN32)
-    target_link_libraries(
-      ${test}
-      PUBLIC
-        ntdll
-    )
-  endif()
 
   add_test(
     NAME ${test}
@@ -41,7 +20,7 @@ foreach(test IN LISTS tests)
   set_tests_properties(
     ${test}
     PROPERTIES
-    DISABLED TRUE # Don't actually run tests
+    DISABLED ON # Don't actually run tests
   )
 endforeach()
 
