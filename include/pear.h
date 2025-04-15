@@ -10,7 +10,7 @@ extern "C" {
 typedef char pear_id_t[PEAR_ID_MAX + 1 /* NULL */];
 
 int
-pear_launch(int argc, char *argv[], pear_id_t key, const char *name);
+pear_launch(int argc, char *argv[], pear_id_t id, const char *name);
 
 #ifdef __cplusplus
 }

@@ -204,7 +204,7 @@ pear__on_lock(appling_lock_t *req, int status) {
 }
 
 int
-pear_launch(int argc, char *argv[], pear_id_t key, const char *name) {
+pear_launch(int argc, char *argv[], pear_id_t id, const char *name) {
   int err;
 
   pear__app_name = name;
@@ -219,7 +219,7 @@ pear_launch(int argc, char *argv[], pear_id_t key, const char *name) {
   err = uv_exepath(pear__app.path, &path_len);
   assert(err == 0);
 
-  memcpy(&pear__app.id, key, sizeof(appling_id_t));
+  memcpy(&pear__app.id, id, sizeof(appling_id_t));
 
   if (argc > 1) {
     err = appling_parse(argv[1], &pear__app_link);
