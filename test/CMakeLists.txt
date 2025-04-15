@@ -3,7 +3,13 @@ list(APPEND tests
 )
 
 foreach(test IN LISTS tests)
-  add_executable(${test} ${test}.cc)
+  add_executable(${test} ${test}.c)
+
+  set_target_properties(
+    ${test}
+    PROPERTIES
+    LINKER_LANGUAGE CXX
+  )
 
   target_link_libraries(
     ${test}
