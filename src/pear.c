@@ -4,6 +4,7 @@
 #include <js.h>
 #include <log.h>
 #include <path.h>
+#include <stdint.h>
 #include <string.h>
 #include <uv.h>
 
@@ -24,6 +25,7 @@ static appling_lock_t pear__lock;
 static const char *pear__path;
 static appling_resolve_t pear__resolve;
 static appling_bootstrap_t pear__bootstrap;
+static uint64_t pear__bootstrap_start;
 
 static appling_platform_t pear__platform = {
   .key = {0x6b, 0x83, 0x74, 0xf1, 0xc0, 0x80, 0x9e, 0xd2, 0x3c, 0xfc, 0x37, 0x1e, 0x87, 0x89, 0x6c, 0x8d, 0x3b, 0xb5, 0x93, 0xf2, 0x45, 0x1d, 0x4d, 0x8d, 0xe8, 0x95, 0xd6, 0x28, 0x94, 0x18, 0x18, 0xdc},
@@ -50,6 +52,12 @@ pear__on_unlock_boostrap(appling_lock_t *req, int status) {
 
   assert(status == 0);
 
+  uint64_t elapsed = uv_hrtime() - pear__bootstrap_start;
+
+  elapsed /= 1e6;
+
+  if (elapsed < 5000) uv_sleep(5000 - elapsed);
+
   err = fx_dispatch(pear__on_close, NULL);
   assert(err == 0);
 }
@@ -75,6 +83,8 @@ pear__on_thread(void *data) {
   js_platform_t *js;
   err = js_create_platform(&loop, NULL, &js);
   assert(err == 0);
+
+  pear__bootstrap_start = uv_hrtime();
 
   err = appling_bootstrap(&loop, js, &pear__bootstrap, pear__platform.key, pear__path, pear__on_bootstrap);
   assert(err == 0);
