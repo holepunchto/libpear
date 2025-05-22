@@ -4,6 +4,8 @@ find_package(cmake-fetch REQUIRED PATHS node_modules/cmake-fetch)
 
 project(pear C CXX ASM)
 
+set(PEAR_RESTART_AFTER_BOOTSTRAP ON CACHE BOOL "Restart the appling once the Pear runtime has bootstrapped")
+
 fetch_package("github:holepunchto/libappling")
 fetch_package("github:holepunchto/libfx")
 
@@ -29,6 +31,12 @@ target_include_directories(
   PRIVATE
     $<TARGET_PROPERTY:appling,INTERFACE_INCLUDE_DIRECTORIES>
     $<TARGET_PROPERTY:fx,INTERFACE_INCLUDE_DIRECTORIES>
+)
+
+target_compile_definitions(
+  pear
+  PRIVATE
+    PEAR_RESTART_AFTER_BOOTSTRAP=$<BOOL:${PEAR_RESTART_AFTER_BOOTSTRAP}>
 )
 
 add_library(pear_static STATIC)

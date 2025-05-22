@@ -42,8 +42,10 @@ pear__on_close(fx_t *fx, void *data) {
   err = fx_close_window(pear__window);
   assert(err == 0);
 
+#if PEAR_RESTART_AFTER_BOOTSTRAP
   err = appling_open(&pear__app, NULL);
   assert(err == 0);
+#endif
 }
 
 static void
