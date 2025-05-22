@@ -68,7 +68,7 @@ static void
 pear__on_bootstrap(appling_bootstrap_t *req, int status) {
   int err;
 
-  assert(status == 0);
+  if (status != 0) log_fatal("%s", req->error);
 
   err = appling_unlock(req->loop, &pear__lock, pear__on_unlock_boostrap);
   assert(err == 0);
