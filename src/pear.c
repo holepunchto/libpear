@@ -88,7 +88,7 @@ pear__on_thread(void *data) {
 
   pear__bootstrap_start = uv_hrtime();
 
-  err = appling_bootstrap(&loop, js, &pear__bootstrap, pear__platform.key, pear__path, &pear__app_link, pear__on_bootstrap);
+  err = appling_bootstrap(&loop, js, &pear__bootstrap, pear__platform.key, pear__path, pear__on_bootstrap, pear__app_link);
   assert(err == 0);
 
   err = uv_run(&loop, UV_RUN_DEFAULT);
