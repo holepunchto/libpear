@@ -88,7 +88,7 @@ pear__on_thread(void *data) {
 
   pear__bootstrap_start = uv_hrtime();
 
-  err = appling_bootstrap(&loop, js, &pear__bootstrap, pear__platform.key, pear__path, pear__on_bootstrap);
+  err = appling_bootstrap(&loop, js, &pear__bootstrap, pear__platform.key, pear__app_link, pear__path, pear__on_bootstrap);
   assert(err == 0);
 
   err = uv_run(&loop, UV_RUN_DEFAULT);
@@ -216,7 +216,7 @@ pear__on_lock(appling_lock_t *req, int status) {
 }
 
 int
-pear_launch(int argc, char *argv[], pear_id_t id, const char *name) {
+pear_launch(int argc, char *argv[], pear_id_t id, const char *name, const char *link) {
   int err;
 
   pear__app_name = name;
@@ -233,7 +233,10 @@ pear_launch(int argc, char *argv[], pear_id_t id, const char *name) {
 
   memcpy(&pear__app.id, id, sizeof(appling_id_t));
 
-  if (argc > 1) {
+  if (link != NULL) {
+    err = appling_parse(link, &pear__app_link);
+    assert(err == 0);
+  } else if (argc > 1) {
     err = appling_parse(argv[1], &pear__app_link);
     assert(err == 0);
   } else {
