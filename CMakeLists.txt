@@ -6,7 +6,7 @@ project(pear C CXX ASM)
 
 set(PEAR_RESTART_AFTER_BOOTSTRAP ON CACHE BOOL "Restart the appling once the Pear runtime has bootstrapped")
 
-fetch_package("github:holepunchto/libappling#app-link")
+fetch_package("github:holepunchto/libappling")
 fetch_package("github:holepunchto/libfx")
 
 add_library(pear OBJECT)
