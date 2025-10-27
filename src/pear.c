@@ -241,6 +241,8 @@ pear_launch(int argc, char *argv[], pear_id_t id, const char *name, const char *
     assert(err == 0);
   } else {
     memcpy(&pear__app_link.id, pear__app.id, sizeof(appling_id_t));
+
+    pear__app_link.data[0] = '\0';
   }
 
   pear__path = NULL; // Default platform directory
