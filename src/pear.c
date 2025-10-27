@@ -228,7 +228,7 @@ pear__on_lock(appling_lock_t *req, int status) {
 }
 
 int
-pear_launch(int argc, char *argv[], pear_id_t id, const char *name, const char *link) {
+pear_launch(int argc, char *argv[], pear_id_t id, const char *name) {
   int err;
 
   pear__app_name = name;
@@ -245,10 +245,7 @@ pear_launch(int argc, char *argv[], pear_id_t id, const char *name, const char *
 
   memcpy(&pear__app.id, id, sizeof(appling_id_t));
 
-  if (link != NULL) {
-    err = appling_parse(link, &pear__app_link);
-    assert(err == 0);
-  } else if (argc > 1) {
+  if (argc > 1) {
     err = appling_parse(argv[1], &pear__app_link);
     assert(err == 0);
   } else {
