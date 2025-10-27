@@ -4,6 +4,7 @@
 #include <js.h>
 #include <log.h>
 #include <path.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
 #include <uv.h>
@@ -26,6 +27,7 @@ static const char *pear__path;
 static appling_resolve_t pear__resolve;
 static appling_bootstrap_t pear__bootstrap;
 static uint64_t pear__bootstrap_start;
+static bool pear__needs_bootstrap;
 
 static appling_platform_t pear__platform = {
   .key = {0xbf, 0x47, 0x95, 0x07, 0x28, 0xa6, 0xa2, 0x24, 0xa9, 0xcf, 0x62, 0xa5, 0xec, 0x36, 0xf0, 0x9f, 0x55, 0x2e, 0xe8, 0xf7, 0x27, 0xf1, 0xcd, 0x6a, 0x69, 0x58, 0x44, 0x26, 0xde, 0xe6, 0xfd, 0x03},
@@ -69,6 +71,10 @@ pear__on_bootstrap(appling_bootstrap_t *req, int status) {
   int err;
 
   if (status != 0) log_fatal("%s", req->error);
+  else {
+    err = appling_preflight(&pear__platform, &pear__app_link);
+    assert(err == 0);
+  }
 
   err = appling_unlock(req->loop, &pear__lock, pear__on_unlock_boostrap);
   assert(err == 0);
@@ -78,30 +84,34 @@ static void
 pear__on_thread(void *data) {
   int err;
 
-  uv_loop_t loop;
-  err = uv_loop_init(&loop);
-  assert(err == 0);
-
-  js_platform_t *js;
-  err = js_create_platform(&loop, NULL, &js);
-  assert(err == 0);
-
   pear__bootstrap_start = uv_hrtime();
 
-  err = appling_bootstrap(&loop, js, &pear__bootstrap, pear__platform.key, pear__path, pear__on_bootstrap);
-  assert(err == 0);
+  if (pear__needs_bootstrap) {
+    uv_loop_t loop;
+    err = uv_loop_init(&loop);
+    assert(err == 0);
 
-  err = uv_run(&loop, UV_RUN_DEFAULT);
-  assert(err == 0);
+    js_platform_t *js;
+    err = js_create_platform(&loop, NULL, &js);
+    assert(err == 0);
 
-  err = js_destroy_platform(js);
-  assert(err == 0);
+    err = appling_bootstrap(&loop, js, &pear__bootstrap, pear__platform.key, pear__path, pear__on_bootstrap);
+    assert(err == 0);
 
-  err = uv_run(&loop, UV_RUN_DEFAULT);
-  assert(err == 0);
+    err = uv_run(&loop, UV_RUN_DEFAULT);
+    assert(err == 0);
 
-  err = uv_loop_close(&loop);
-  assert(err == 0);
+    err = js_destroy_platform(js);
+    assert(err == 0);
+
+    err = uv_run(&loop, UV_RUN_DEFAULT);
+    assert(err == 0);
+
+    err = uv_loop_close(&loop);
+    assert(err == 0);
+  } else {
+    pear__on_bootstrap(&pear__bootstrap, 0);
+  }
 }
 
 static void
@@ -188,9 +198,11 @@ static void
 pear__on_resolve(appling_resolve_t *req, int status) {
   int err;
 
-  if (status == 0) {
+  if (status == 0 && appling_ready(&pear__platform, &pear__app_link)) {
     err = appling_unlock(req->loop, &pear__lock, pear__on_unlock_launch);
   } else {
+    pear__needs_bootstrap = status != 0;
+
     fx_t *fx;
     err = fx_init(req->loop, &fx);
     assert(err == 0);
