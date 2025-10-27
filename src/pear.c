@@ -34,7 +34,7 @@ static appling_platform_t pear__platform = {
   .length = 1834,
 };
 
-static appling_app_t pear__app = {0};
+static appling_app_t pear__app;
 static const char *pear__app_name;
 
 static void
