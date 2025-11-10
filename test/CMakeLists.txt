@@ -11,6 +11,12 @@ foreach(test IN LISTS tests)
       pear_static
   )
 
+  target_compile_definitions(
+    ${test}
+    PRIVATE
+      "PEAR_PATH=\"${CMAKE_CURRENT_LIST_DIR}/fixtures/platform\""
+  )
+
   add_test(
     NAME ${test}
     COMMAND ${test}

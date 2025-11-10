@@ -9,6 +9,8 @@ extern "C" {
 
 typedef char pear_id_t[PEAR_ID_MAX + 1 /* NULL */];
 
+extern const char *pear_path;
+
 int
 pear_launch(int argc, char *argv[], pear_id_t id, const char *name);
 

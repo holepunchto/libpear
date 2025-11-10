@@ -51,7 +51,7 @@ pear__on_close(fx_t *fx, void *data) {
 }
 
 static void
-pear__on_unlock_boostrap(appling_lock_t *req, int status) {
+pear__on_unlock_after_bootstrap(appling_lock_t *req, int status) {
   int err;
 
   assert(status == 0);
@@ -67,17 +67,31 @@ pear__on_unlock_boostrap(appling_lock_t *req, int status) {
 }
 
 static void
+pear__on_resolve_after_bootstrap(appling_resolve_t *req, int status) {
+  int err;
+
+  assert(status == 0);
+
+  err = appling_preflight(&pear__platform, &pear__app_link);
+  assert(err == 0);
+
+  err = appling_unlock(req->loop, &pear__lock, pear__on_unlock_after_bootstrap);
+  assert(err == 0);
+}
+
+static void
 pear__on_bootstrap(appling_bootstrap_t *req, int status) {
   int err;
 
-  if (status != 0) log_fatal("%s", req->error);
-  else {
-    err = appling_preflight(&pear__platform, &pear__app_link);
+  if (status == 0) {
+    err = appling_resolve(req->loop, &pear__resolve, pear__path, &pear__platform, pear__on_resolve_after_bootstrap);
+    assert(err == 0);
+  } else {
+    log_fatal("%s", req->error);
+
+    err = appling_unlock(req->loop, &pear__lock, pear__on_unlock_after_bootstrap);
     assert(err == 0);
   }
-
-  err = appling_unlock(req->loop, &pear__lock, pear__on_unlock_boostrap);
-  assert(err == 0);
 }
 
 static void
@@ -185,7 +199,7 @@ pear__on_launch(fx_t *fx) {
 }
 
 static void
-pear__on_unlock_launch(appling_lock_t *req, int status) {
+pear__on_unlock_before_bootstrap(appling_lock_t *req, int status) {
   int err;
 
   assert(status == 0);
@@ -195,11 +209,11 @@ pear__on_unlock_launch(appling_lock_t *req, int status) {
 }
 
 static void
-pear__on_resolve(appling_resolve_t *req, int status) {
+pear__on_resolve_before_bootstrap(appling_resolve_t *req, int status) {
   int err;
 
   if (status == 0 && appling_ready(&pear__platform, &pear__app_link)) {
-    err = appling_unlock(req->loop, &pear__lock, pear__on_unlock_launch);
+    err = appling_unlock(req->loop, &pear__lock, pear__on_unlock_before_bootstrap);
   } else {
     pear__needs_bootstrap = status != 0;
 
@@ -223,9 +237,11 @@ pear__on_lock(appling_lock_t *req, int status) {
 
   assert(status == 0);
 
-  err = appling_resolve(req->loop, &pear__resolve, pear__path, &pear__platform, pear__on_resolve);
+  err = appling_resolve(req->loop, &pear__resolve, pear__path, &pear__platform, pear__on_resolve_before_bootstrap);
   assert(err == 0);
 }
+
+const char *pear_path = NULL;
 
 int
 pear_launch(int argc, char *argv[], pear_id_t id, const char *name) {
@@ -254,7 +270,7 @@ pear_launch(int argc, char *argv[], pear_id_t id, const char *name) {
     pear__app_link.data[0] = '\0';
   }
 
-  pear__path = NULL; // Default platform directory
+  pear__path = pear_path; // Default platform directory
 
 #if defined(APPLING_OS_LINUX)
   if (getenv("SNAP_USER_COMMON") != NULL) {
